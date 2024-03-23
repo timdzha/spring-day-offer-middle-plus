@@ -20,12 +20,11 @@ public class TaskDistributorImpl implements TaskDistributor {
     public void distribute(List<EmployeeDTO> employees, List<TaskDTO> tasks) {
         Set<TaskDTO> taskSet = new HashSet<>(tasks);
         Set<EmployeeDTO> employeeSet = new HashSet<>(employees);
-        List<EmployeeDTO> result = new ArrayList<>(employees);
 
         int taskCount = tasks.size();
         int employeeCount = employees.size();
 
-        while (taskCount <= 0 || employeeCount <= 0) {
+        while (taskCount != 0 && employeeCount != 0) {
             for (EmployeeDTO employeeDTO: employeeSet) {
                 Optional<EmployeeDTO> first = employees.stream()
                         .filter(employeeDTO1 -> employeeDTO.getFio().equals(employeeDTO1.getFio()))
@@ -36,7 +35,6 @@ public class TaskDistributorImpl implements TaskDistributor {
                     if (totalLeadTime > MAX_LOAD_HOURS) {
                         employeeCount--;
                         employeeSet.remove(employeeDTO1);
-                        result.add(employeeDTO1);
                         break;
                     } else {
                         List<TaskDTO> employeeDTOTasks = employeeDTO1.getTasks();

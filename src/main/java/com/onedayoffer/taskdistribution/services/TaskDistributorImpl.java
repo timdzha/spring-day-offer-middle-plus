@@ -14,7 +14,7 @@ import java.util.Set;
 @Component
 public class TaskDistributorImpl implements TaskDistributor {
 
-    private static final Integer MAX_LOAD_HOURS = 7;
+    private static final Integer MAX_LOAD_MINUTES = 7 * 60;
 
     @Override
     public void distribute(List<EmployeeDTO> employees, List<TaskDTO> tasks) {
@@ -32,7 +32,7 @@ public class TaskDistributorImpl implements TaskDistributor {
                 if (first.isPresent()) {
                     EmployeeDTO employeeDTO1 = first.get();
                     Integer totalLeadTime = employeeDTO1.getTotalLeadTime();
-                    if (totalLeadTime > MAX_LOAD_HOURS) {
+                    if (totalLeadTime > MAX_LOAD_MINUTES) {
                         employeeCount--;
                         employeeSet.remove(employeeDTO1);
                         break;
@@ -43,11 +43,15 @@ public class TaskDistributorImpl implements TaskDistributor {
                         }
                         Optional<TaskDTO> maxPriorityTask = taskSet.stream()
                                 .filter(task -> task.getLeadTime() >= totalLeadTime)
-                                .max(Comparator.comparing(TaskDTO::getPriority));
+                                .min(Comparator.comparing(TaskDTO::getPriority));
                         if (maxPriorityTask.isPresent()) {
                             employeeDTOTasks.add(maxPriorityTask.get());
                             taskSet.remove(maxPriorityTask.get());
                             taskCount--;
+                        } else {
+                            employeeCount--;
+                            employeeSet.remove(employeeDTO1);
+                            break;
                         }
                     }
                 }

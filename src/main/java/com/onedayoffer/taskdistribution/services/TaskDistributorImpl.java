@@ -42,7 +42,7 @@ public class TaskDistributorImpl implements TaskDistributor {
                             employeeDTOTasks = new ArrayList<>();
                         }
                         Optional<TaskDTO> maxPriorityTask = taskSet.stream()
-                                .filter(task -> task.getLeadTime() >= totalLeadTime)
+                                .filter(task -> task.getLeadTime() <= MAX_LOAD_MINUTES - totalLeadTime)
                                 .min(Comparator.comparing(TaskDTO::getPriority));
                         if (maxPriorityTask.isPresent()) {
                             employeeDTOTasks.add(maxPriorityTask.get());
